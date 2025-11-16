@@ -28,9 +28,40 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    // write apis in this line
+    // target to mongo database
+    const assignment10 = client.db("assignment10");
+    // select db collection from main(now: assignment10) database
+    const cropsCollection = assignment10.collection("crops");
+
+    // api for getting data
+    // get method: find(), findOne()
+    app.get("/", (req, res) => {
+      res.send("");
+    });
+
+    // function for find data
+    app.get("/crops", async (req, res) => {
+      const result = await cropsCollection.find().toArray();
+      res.send(result);
+    });
+
+    // put data to mongodb
+    // post method: insertOne(), insertMany()
+    app.post("/crops", async (req, res) => {
+      // data from client side
+      const data = req.body;
+      console.log(data);
+
+      // data insert to database
+      const result = await cropsCollection.insertOne();
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
